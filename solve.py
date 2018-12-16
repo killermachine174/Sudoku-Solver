@@ -19,6 +19,9 @@ Rules:
 2) No duplicates in row:
 3) No duplicates in column:
 
+_______________________________________________________________________________________________
+Huge inspiration from Solving Every Sudoku Puzzle by Peter Norvig http://norvig.com/sudoku.html
+_______________________________________________________________________________________________
 
 '''
 
@@ -26,10 +29,10 @@ Rules:
 # If intended this all can be left 0 to generate sudoku
 
 
-grid = '000000000000000000000000000000000000000000000000000000000000000000000000000000000'
-grid = '003020600900305001000002121212121201806400008102900700000008006708200002609500800'  # easy
-# grid = '600874010009036000000190800794600000001089400000410069070050090053907600902061047'
-grid = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+grid = '000000000000000000000000000000000000000000000000000000000000000000000000000000000'  # feeding a empty board
+grid = '600874010009036000000190800794600000001089400000410069070050090053907600902061047'
+# grid = '900000207700063000040000800087040009009102078302900000600700100200006000800001600'
+
 # This is a global variable used as board for whole program
 board = []
 
@@ -74,16 +77,16 @@ def print_grid(board_name):
 
 def solve_by_possibilities():
     global board
-    while True:
+    while True:  # running until there are changes made on the board
         changes = False
         for x in range(9):
             for y in range(9):
                 all_possibilities = get_all_possibilities(x, y)
                 if not all_possibilities:  # if all_possibilities == false
                     continue
-                if len(all_possibilities) == 0:
+                if len(all_possibilities) == 0:  # if possibility is zero that means there is error on board
                     break
-                if len(all_possibilities) == 1:
+                if len(all_possibilities) == 1:  # if possibility is one that means that possibility is the answer
                     board[x][y] = all_possibilities[0]
                     changes = True
         if not changes:
@@ -133,30 +136,28 @@ def get_all_possibilities(x, y):
 def guessing_and_backtracking():
     global board
 
-    solve_by_possibilities()
-    if is_complete():
+    solve_by_possibilities()  # solving by possibility first then only moving to recursion
+    if is_complete():  # program stops here if the board is complete and stops the recursion
         return True
 
     x, y = 0, 0
     for rowIndex, row in enumerate(board):
         for columnIndex, column in enumerate(board):
-            if column == '.':
+            # searches for empty spot at board & gets the coordinate to make a guess
+            if board[rowIndex][columnIndex] == '.':
                 x, y = rowIndex, columnIndex
-
+    # gets all the possibilities at the coordinate and makes a guess
     all_possibilities = get_all_possibilities(x, y)
-    print(board[x][y])
-    print(all_possibilities)
-    # for values in all_possibilities:
-    #     copy_of_board = deepcopy(board)
-    #     board[x][y] = values
-    #     result = guessing_and_backtracking()  # recursively calling method again to check if the board is solved.
-    #     if result:
-    #         return True
-    #     else:
-    #         board = copy_of_board
-    #
-    #  return False
+    for values in all_possibilities:
+        copy_of_board = deepcopy(board)  # making a copy of board if guess is wrong
+        board[x][y] = values
+        result = guessing_and_backtracking()  # recursively calling method again to check if the board is solved.
+        if result:
+            return True
+        else:
+            board = copy_of_board  # bringing back the copy of board as if there is wrong guess on the board
 
+    return False
 
 
 def is_complete():
@@ -167,18 +168,18 @@ def is_complete():
     if any('.' in rows for rows in board):
         return False
     else:
-        print_grid(board)
-        print("Board Complete")
         return True
 
 
 def main():
     my_grid = change_to_grid()  # can also return a board
     zero_to_dot()
-    solve_by_possibilities()
-    if not is_complete():
-        guessing_and_backtracking()
-    is_complete()
+    guessing_and_backtracking()
+    if is_complete():
+        print_grid(my_grid)
+        print("Board Complete !!!")
+    else:
+        print("Error on board")
 
 
 if __name__ == '__main__':
