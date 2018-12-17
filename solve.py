@@ -30,7 +30,7 @@ ________________________________________________________________________________
 
 
 grid = '000000000000000000000000000000000000000000000000000000000000000000000000000000000'  # feeding a empty board
-grid = '600874010009036000000190800794600000001089400000410069070050090053907600902061047'
+# grid = '600874010009036000000190800794600000001089400000410069070050090053907600902061047'
 # grid = '900000207700063000040000800087040009009102078302900000600700100200006000800001600'
 
 # This is a global variable used as board for whole program
@@ -135,7 +135,6 @@ def get_all_possibilities(x, y):
 
 def guessing_and_backtracking():
     global board
-
     solve_by_possibilities()  # solving by possibility first then only moving to recursion
     if is_complete():  # program stops here if the board is complete and stops the recursion
         return True
@@ -163,7 +162,6 @@ def guessing_and_backtracking():
 def is_complete():
     """ This method checks if the board is complete or not"""
     global board
-
     # this basically is getting all the elements from rows, which is inside of board
     if any('.' in rows for rows in board):
         return False
@@ -172,14 +170,15 @@ def is_complete():
 
 
 def main():
-    my_grid = change_to_grid()  # can also return a board
+    change_to_grid()  # can also return a board
     zero_to_dot()
+    solve_by_possibilities()
     guessing_and_backtracking()
     if is_complete():
-        print_grid(my_grid)
-        print("Board Complete !!!")
+        print_grid(board)
+        print("Complete Board!")
     else:
-        print("Error on board")
+        print("ERROR ON BOARD!!!")
 
 
 if __name__ == '__main__':
